@@ -1,0 +1,58 @@
+import type { Asset } from "../types/asset.types";
+
+export const MOCK_ASSETS: Asset[] = [
+  {
+    id: "A001",
+    name: 'MacBook Pro 14"',
+    category: "Laptop",
+    serial: "MBP-2023-001",
+    assignedTo: "Sara",
+    status: "Assigned",
+    purchaseDate: "2023-01-15",
+  },
+  {
+    id: "A002",
+    name: 'Dell Monitor 27"',
+    category: "Monitor",
+    serial: "DM-2022-045",
+    assignedTo: "—",
+    status: "Available",
+    purchaseDate: "2022-06-10",
+  },
+  {
+    id: "A003",
+    name: "iPhone 14 Pro",
+    category: "Phone",
+    serial: "IP-2023-012",
+    assignedTo: "Vanessa",
+    status: "Assigned",
+    purchaseDate: "2023-03-20",
+  },
+  {
+    id: "A004",
+    name: "Logitech MX Keys",
+    category: "Keyboard",
+    serial: "LG-2021-088",
+    assignedTo: "—",
+    status: "Maintenance",
+    purchaseDate: "2021-11-05",
+  },
+  {
+    id: "A005",
+    name: "MacBook Air M2",
+    category: "Laptop",
+    serial: "MBA-2023-007",
+    assignedTo: "Ellies",
+    status: "Assigned",
+    purchaseDate: "2023-07-01",
+  },
+  {
+    id: "A006",
+    name: 'iPad Pro 12.9"',
+    category: "Tablet",
+    serial: "IPD-2022-033",
+    assignedTo: "—",
+    status: "Available",
+    purchaseDate: "2022-09-14",
+  },
+];
