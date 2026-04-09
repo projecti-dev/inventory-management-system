@@ -1,77 +1,185 @@
-import { Outlet, NavLink } from "react-router-dom";
-import type { CSSProperties } from "react";
+import { useState } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import {
+  Box,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  IconButton,
+  useMediaQuery,
+  useTheme,
+  AppBar,
+  Toolbar,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { NAV_ITEMS } from "../constants/navItems";
 
-const styles: Record<string, CSSProperties> = {
-  layout: {
-    display: "flex",
-    minHeight: "100vh",
-  },
-  sidebar: {
-    width: 220,
-    backgroundColor: "#2d3436",
-    color: "white",
-    padding: "24px 16px",
-    display: "flex",
-    flexDirection: "column",
-    gap: 32,
-    position: "fixed",
-    height: "100vh",
-  },
-  logo: {
-    fontSize: 20,
-    fontWeight: 700,
-    color: "#74b9ff",
-  },
-  nav: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 8,
-  },
-  navLink: {
-    padding: "10px 14px",
-    borderRadius: 8,
-    color: "#b2bec3",
-    fontSize: 15,
-    cursor: "pointer",
-  },
-  navLinkActive: {
-    padding: "10px 14px",
-    borderRadius: 8,
-    backgroundColor: "#0984e3",
-    color: "white",
-    fontSize: 15,
-    cursor: "pointer",
-  },
-  main: {
-    marginLeft: 220,
-    padding: 32,
-    flex: 1,
-  },
-};
+const DRAWER_WIDTH = 240;
 
 export default function Layout() {
-  const getLinkStyle = ({ isActive }: { isActive: boolean }): CSSProperties =>
-    isActive ? styles.navLinkActive : styles.navLink;
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const DrawerContent = (
+    <Box
+      sx={{
+        height: "100%",
+        backgroundColor: "primary.main",
+        display: "flex",
+        flexDirection: "column",
+        py: 3,
+        px: 2,
+      }}
+    >
+      <Typography
+        sx={{
+          fontFamily: "Poppins",
+          fontWeight: 800,
+          fontSize: "20px",
+          color: "secondary.main",
+          mb: 4,
+          px: 1,
+        }}
+      >
+        IT Assets
+      </Typography>
+
+      <List disablePadding sx={{ flexGrow: 1 }}>
+        {NAV_ITEMS.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <ListItemButton
+              key={item.label}
+              onClick={() => {
+                navigate(item.path);
+                setDrawerOpen(false);
+              }}
+              sx={{
+                borderRadius: 2,
+                mb: 0.5,
+                backgroundColor: isActive ? "secondary.main" : "transparent",
+                color: isActive ? "white" : "grey.400",
+                "&:hover": {
+                  backgroundColor: isActive
+                    ? "secondary.main"
+                    : "rgba(255,255,255,0.08)",
+                  color: "white",
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.label}
+                sx={{
+                  "& .MuiListItemText-primary": {
+                    fontFamily: "Poppins",
+                    fontWeight: 500,
+                    fontSize: "15px",
+                  },
+                }}
+              />
+            </ListItemButton>
+          );
+        })}
+      </List>
+
+      <ListItemButton
+        sx={{
+          borderRadius: 2,
+          color: "grey.400",
+          "&:hover": {
+            backgroundColor: "rgba(255,255,255,0.08)",
+            color: "white",
+          },
+        }}
+      >
+        <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
+          <LogoutIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText
+          primary="Logout"
+          sx={{
+            "& .MuiListItemText-primary": {
+              fontFamily: "Poppins",
+              fontWeight: 500,
+              fontSize: "15px",
+            },
+          }}
+        />
+      </ListItemButton>
+    </Box>
+  );
 
   return (
-    <div style={styles.layout}>
-      <aside style={styles.sidebar}>
-        <div style={styles.logo}>IT Assets</div>
-        <nav style={styles.nav}>
-          <NavLink to="/" end style={getLinkStyle}>
-            Dashboard
-          </NavLink>
-          <NavLink to="/assets" style={getLinkStyle}>
-            Assets
-          </NavLink>
-          <NavLink to="/assets/new" style={getLinkStyle}>
-            + Add Asset
-          </NavLink>
-        </nav>
-      </aside>
-      <main style={styles.main}>
+    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+      {isMobile && (
+        <AppBar
+          position="fixed"
+          elevation={0}
+          sx={{
+            backgroundColor: "primary.main",
+            zIndex: theme.zIndex.drawer + 1,
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              onClick={() => setDrawerOpen(true)}
+              sx={{ mr: 1 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              sx={{
+                fontFamily: "Poppins",
+                fontWeight: 800,
+                color: "secondary.main",
+              }}
+            >
+              IT Assets
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      )}
+
+      <Drawer
+        variant={isMobile ? "temporary" : "permanent"}
+        open={isMobile ? drawerOpen : true}
+        onClose={() => setDrawerOpen(false)}
+        sx={{
+          width: DRAWER_WIDTH,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: DRAWER_WIDTH,
+            boxSizing: "border-box",
+            border: "none",
+          },
+        }}
+      >
+        {DrawerContent}
+      </Drawer>
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: { xs: 2, md: 4 },
+          mt: { xs: 8, md: 0 },
+          backgroundColor: "background.default",
+          minHeight: "100vh",
+        }}
+      >
         <Outlet />
-      </main>
-    </div>
+      </Box>
+    </Box>
   );
 }
