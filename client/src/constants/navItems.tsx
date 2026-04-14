@@ -10,7 +10,11 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", path: "/", icon: <DashboardIcon fontSize="small" /> },
+  {
+    label: "Dashboard",
+    path: "/dashboard",
+    icon: <DashboardIcon fontSize="small" />,
+  },
   { label: "Assets", path: "/assets", icon: <DevicesIcon fontSize="small" /> },
   {
     label: "Add Asset",

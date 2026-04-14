@@ -13,10 +13,13 @@ import {
   useTheme,
   AppBar,
   Toolbar,
+  Avatar,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { NAV_ITEMS } from "../constants/navItems";
+import { useAuth } from "../context/AuthContext";
 
 const DRAWER_WIDTH = 240;
 
@@ -26,6 +29,12 @@ export default function Layout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
   const DrawerContent = (
     <Box
@@ -38,6 +47,7 @@ export default function Layout() {
         px: 2,
       }}
     >
+      {/* Logo */}
       <Typography
         sx={{
           fontFamily: "Poppins",
@@ -51,6 +61,7 @@ export default function Layout() {
         IT Assets
       </Typography>
 
+      {/* Nav Links */}
       <List disablePadding sx={{ flexGrow: 1 }}>
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.path;
@@ -92,30 +103,79 @@ export default function Layout() {
         })}
       </List>
 
-      <ListItemButton
-        sx={{
-          borderRadius: 2,
-          color: "grey.400",
-          "&:hover": {
-            backgroundColor: "rgba(255,255,255,0.08)",
-            color: "white",
-          },
-        }}
-      >
-        <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
-          <LogoutIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText
-          primary="Logout"
+      <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: 2 }} />
+
+      {/* Bottom section — user + logout */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+        {/* User info row */}
+        {user && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              px: 1.5,
+              py: 1,
+              borderRadius: 2,
+              backgroundColor: "rgba(255,255,255,0.05)",
+            }}
+          >
+            <Avatar
+              sx={{
+                width: 28,
+                height: 28,
+                backgroundColor: "secondary.main",
+                fontSize: "12px",
+                fontFamily: "Poppins",
+                fontWeight: 600,
+              }}
+            >
+              {user.name.charAt(0).toUpperCase()}
+            </Avatar>
+            <Typography
+              sx={{
+                fontFamily: "Poppins",
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "grey.300",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {user.name}
+            </Typography>
+          </Box>
+        )}
+
+        {/* Logout row */}
+        <ListItemButton
+          onClick={handleLogout}
           sx={{
-            "& .MuiListItemText-primary": {
-              fontFamily: "Poppins",
-              fontWeight: 500,
-              fontSize: "15px",
+            borderRadius: 2,
+            py: 0.75,
+            color: "grey.500",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.08)",
+              color: "grey.300",
             },
           }}
-        />
-      </ListItemButton>
+        >
+          <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
+            <LogoutIcon sx={{ fontSize: 18 }} />
+          </ListItemIcon>
+          <ListItemText
+            primary="Logout"
+            sx={{
+              "& .MuiListItemText-primary": {
+                fontFamily: "Poppins",
+                fontWeight: 400,
+                fontSize: "13px",
+              },
+            }}
+          />
+        </ListItemButton>
+      </Box>
     </Box>
   );
 
