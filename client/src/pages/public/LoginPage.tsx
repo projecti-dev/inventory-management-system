@@ -6,9 +6,14 @@ import {
   TextField,
   Button,
   Divider,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useAuth } from "../../context/AuthContext";
 
 interface LoginForm {
   email: string;
@@ -19,28 +24,28 @@ const initialForm: LoginForm = { email: "", password: "" };
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [form, setForm] = useState<LoginForm>(initialForm);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange =
     (field: keyof LoginForm) => (e: React.ChangeEvent<HTMLInputElement>) =>
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // API call will go here
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/dashboard");
-    }, 1000);
+    await login(form.email, form.password);
+    setLoading(false);
+    navigate("/dashboard");
   };
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundColor: "#f5f6fa",
+        backgroundColor: "#eef1f7",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -75,7 +80,8 @@ export default function LoginPage() {
           maxWidth: 420,
           borderRadius: 3,
           p: { xs: 3, sm: 4 },
-          boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
+          backgroundColor: "#ffffff",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
         }}
       >
         {/* Icon + Title */}
@@ -131,13 +137,32 @@ export default function LoginPage() {
           />
           <TextField
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={form.password}
             onChange={handleChange("password")}
             required
             fullWidth
             size="small"
             autoComplete="current-password"
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      edge="end"
+                      size="small"
+                    >
+                      {showPassword ? (
+                        <VisibilityOffIcon fontSize="small" />
+                      ) : (
+                        <VisibilityIcon fontSize="small" />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
 
           <Button
@@ -160,7 +185,6 @@ export default function LoginPage() {
 
         <Divider sx={{ my: 3 }} />
 
-        {/* Footer */}
         <Typography
           sx={{
             textAlign: "center",

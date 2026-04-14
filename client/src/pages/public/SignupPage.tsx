@@ -6,9 +6,13 @@ import {
   TextField,
   Button,
   Divider,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 interface SignupForm {
   fullName: string;
@@ -29,6 +33,8 @@ export default function SignupPage() {
   const [form, setForm] = useState<SignupForm>(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange =
     (field: keyof SignupForm) =>
@@ -38,25 +44,38 @@ export default function SignupPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
     setLoading(true);
-    // API call will go here
     setTimeout(() => {
       setLoading(false);
-      navigate("/dashboard");
+      navigate("/login");
     }, 1000);
   };
+
+  const visibilityAdornment = (show: boolean, toggle: () => void) => ({
+    input: {
+      endAdornment: (
+        <InputAdornment position="end">
+          <IconButton onClick={toggle} edge="end" size="small">
+            {show ? (
+              <VisibilityOffIcon fontSize="small" />
+            ) : (
+              <VisibilityIcon fontSize="small" />
+            )}
+          </IconButton>
+        </InputAdornment>
+      ),
+    },
+  });
 
   return (
     <Box
       sx={{
         minHeight: "100vh",
-        backgroundColor: "#f5f6fa",
+        backgroundColor: "#eef1f7",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -92,7 +111,8 @@ export default function SignupPage() {
           maxWidth: 440,
           borderRadius: 3,
           p: { xs: 3, sm: 4 },
-          boxShadow: "0 2px 20px rgba(0,0,0,0.08)",
+          backgroundColor: "#ffffff",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
         }}
       >
         {/* Icon + Title */}
@@ -145,7 +165,6 @@ export default function SignupPage() {
             size="small"
             autoComplete="name"
           />
-
           <TextField
             label="Email address"
             type="email"
@@ -156,29 +175,32 @@ export default function SignupPage() {
             size="small"
             autoComplete="email"
           />
-
           <TextField
             label="Password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={form.password}
             onChange={handleChange("password")}
             required
             fullWidth
             size="small"
             autoComplete="new-password"
+            slotProps={visibilityAdornment(showPassword, () =>
+              setShowPassword((p) => !p),
+            )}
           />
-
           <TextField
             label="Confirm password"
-            type="password"
+            type={showConfirm ? "text" : "password"}
             value={form.confirmPassword}
             onChange={handleChange("confirmPassword")}
             required
             fullWidth
             size="small"
+            slotProps={visibilityAdornment(showConfirm, () =>
+              setShowConfirm((p) => !p),
+            )}
           />
 
-          {/* Error message */}
           {error && (
             <Typography
               sx={{
