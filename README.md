@@ -97,6 +97,4 @@ Open [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## License
 
-This project is private and not licensed for public use.
